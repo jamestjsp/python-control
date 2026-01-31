@@ -18,7 +18,7 @@ def fixedseed(scope="class"):
     np.random.seed(5)
 
 
-@pytest.mark.slycot
+@pytest.mark.slicot
 @pytest.mark.usefixtures("fixedseed")
 class TestMinreal:
     """Tests for the StateSpace class."""

@@ -48,7 +48,7 @@ class TestMatrixEquations:
 
     @pytest.mark.parametrize('method',
                              ['scipy',
-                              pytest.param('slycot', marks=pytest.mark.slycot)])
+                              pytest.param('slicot', marks=pytest.mark.slicot)])
     def test_lyap(self, method):
         A = array([[-1, 1], [-1, 0]])
         Q = array([[1, 0], [0, 1]])
@@ -63,13 +63,13 @@ class TestMatrixEquations:
         assert_array_almost_equal(A @ X + X @ A.T + Q, zeros((2,2)))
 
         # Compare methods
-        if method == 'slycot':
+        if method == 'slicot':
             X_scipy = lyap(A, Q, method='scipy')
             assert_array_almost_equal(X_scipy, X)
 
     @pytest.mark.parametrize('method',
                              ['scipy',
-                              pytest.param('slycot', marks=pytest.mark.slycot)])
+                              pytest.param('slicot', marks=pytest.mark.slicot)])
     def test_lyap_sylvester(self, method):
         A = 5
         B = array([[4, 3], [4, 3]])
@@ -86,11 +86,11 @@ class TestMatrixEquations:
         assert_array_almost_equal(A @ X + X @ B + C, zeros((2,2)))
 
         # Compare methods
-        if method=='slycot':
+        if method=='slicot':
             X_scipy = lyap(A, B, C, method='scipy')
             assert_array_almost_equal(X_scipy, X)
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def test_lyap_g(self):
         A = array([[-1, 2], [-3, -4]])
         Q = array([[3, 1], [1, 1]])
@@ -106,7 +106,7 @@ class TestMatrixEquations:
 
     @pytest.mark.parametrize('method',
                              ['scipy',
-                              pytest.param('slycot', marks=pytest.mark.slycot)])
+                              pytest.param('slicot', marks=pytest.mark.slicot)])
     def test_dlyap(self, method):
         A = array([[-0.6, 0],[-0.1, -0.4]])
         Q = array([[1,0],[0,1]])
@@ -121,11 +121,11 @@ class TestMatrixEquations:
         assert_array_almost_equal(A @ X @ A.T - X + Q, zeros((2,2)))
 
         # Compare methods
-        if method=='slycot':
+        if method=='slicot':
             X_scipy = dlyap(A,Q, method='scipy')
             assert_array_almost_equal(X_scipy, X)
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def test_dlyap_g(self):
         A = array([[-0.6, 0],[-0.1, -0.4]])
         Q = array([[3, 1],[1, 1]])
@@ -139,7 +139,7 @@ class TestMatrixEquations:
         with pytest.raises(ControlArgument, match="'scipy' not valid"):
             X = dlyap(A, Q, None, E, method='scipy')
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def test_dlyap_sylvester(self):
         A = 5
         B = array([[4, 3], [4, 3]])
@@ -161,7 +161,7 @@ class TestMatrixEquations:
 
     @pytest.mark.parametrize('method',
                              ['scipy',
-                              pytest.param('slycot', marks=pytest.mark.slycot)])
+                              pytest.param('slicot', marks=pytest.mark.slicot)])
     def test_care(self, method):
         A = array([[-2, -1],[-1, -1]])
         Q = array([[0, 0],[0, 1]])
@@ -175,7 +175,7 @@ class TestMatrixEquations:
         assert_array_almost_equal(B.T @ X, G)
 
         # Compare methods
-        if method == 'slycot':
+        if method == 'slicot':
             X_scipy, L_scipy, G_scipy = care(A, B, Q, method='scipy')
             assert_array_almost_equal(X_scipy, X)
             assert_array_almost_equal(np.sort(L_scipy), np.sort(L))
@@ -183,7 +183,7 @@ class TestMatrixEquations:
 
     @pytest.mark.parametrize('method',
                              ['scipy',
-                              pytest.param('slycot', marks=pytest.mark.slycot)])
+                              pytest.param('slicot', marks=pytest.mark.slicot)])
     def test_care_g(self, method):
         A = array([[-2, -1],[-1, -1]])
         Q = array([[0, 0],[0, 1]])
@@ -202,7 +202,7 @@ class TestMatrixEquations:
             zeros((2,2)))
 
         # Compare methods
-        if method=='slycot':
+        if method=='slicot':
             X_scipy, L_scipy, G_scipy = care(
                 A, B, Q, R, S, E, method='scipy')
             assert_array_almost_equal(X_scipy, X)
@@ -211,7 +211,7 @@ class TestMatrixEquations:
 
     @pytest.mark.parametrize('method',
                              ['scipy',
-                              pytest.param('slycot', marks=pytest.mark.slycot)])
+                              pytest.param('slicot', marks=pytest.mark.slicot)])
     def test_care_g2(self, method):
         A = array([[-2, -1],[-1, -1]])
         Q = array([[0, 0],[0, 1]])
@@ -230,7 +230,7 @@ class TestMatrixEquations:
         assert_array_almost_equal(Gref , G)
 
         # Compare methods
-        if method=='slycot':
+        if method=='slicot':
             X_scipy, L_scipy, G_scipy = care(
                 A, B, Q, R, S, E, method='scipy')
             assert_array_almost_equal(X_scipy, X)
@@ -239,7 +239,7 @@ class TestMatrixEquations:
 
     @pytest.mark.parametrize('method',
                              ['scipy',
-                              pytest.param('slycot', marks=pytest.mark.slycot)])
+                              pytest.param('slicot', marks=pytest.mark.slicot)])
     def test_dare(self, method):
         A = array([[-0.6, 0],[-0.1, -0.4]])
         Q = array([[2, 1],[1, 0]])
@@ -274,7 +274,7 @@ class TestMatrixEquations:
         lam = eigvals(A - B @ G)
         assert_array_less(abs(lam), 1.0)
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def test_dare_compare(self):
         A = np.array([[-0.6, 0], [-0.1, -0.4]])
         Q = np.array([[2, 1], [1, 0]])
@@ -294,7 +294,7 @@ class TestMatrixEquations:
 
     @pytest.mark.parametrize('method',
                              ['scipy',
-                              pytest.param('slycot', marks=pytest.mark.slycot)])
+                              pytest.param('slicot', marks=pytest.mark.slicot)])
     def test_dare_g(self, method):
         A = array([[-0.6, 0],[-0.1, -0.4]])
         Q = array([[2, 1],[1, 3]])
@@ -314,7 +314,7 @@ class TestMatrixEquations:
         lam = eigvals(A - B @ G, E)
         assert_array_less(abs(lam), 1.0)
         # Compare methods
-        if method=='slycot':
+        if method=='slicot':
             X_scipy, L_scipy, G_scipy = dare(
                 A, B, Q, R, S, E, method='scipy')
             assert_array_almost_equal(X_scipy, X)
@@ -323,7 +323,7 @@ class TestMatrixEquations:
 
     @pytest.mark.parametrize('method',
                              ['scipy',
-                              pytest.param('slycot', marks=pytest.mark.slycot)])
+                              pytest.param('slicot', marks=pytest.mark.slicot)])
     def test_dare_g2(self, method):
         A = array([[-0.6, 0], [-0.1, -0.4]])
         Q = array([[2, 1], [1, 3]])
@@ -346,7 +346,7 @@ class TestMatrixEquations:
         lam = eigvals(A - B @ G, E)
         assert_array_less(abs(lam), 1.0)
 
-        if method=='slycot':
+        if method=='slicot':
             X_scipy, L_scipy, G_scipy = dare(
                 A, B, Q, R, S, E, method='scipy')
             assert_array_almost_equal(X_scipy, X)

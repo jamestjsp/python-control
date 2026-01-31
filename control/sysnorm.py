@@ -16,7 +16,7 @@ __all__ = ['system_norm', 'norm']
 
 #------------------------------------------------------------------------------
 
-def _h2norm_slycot(sys, print_warning=True):
+def _h2norm_slicot(sys, print_warning=True):
     """H2 norm of a linear system. For internal use. Requires Slycot.
 
     See Also
@@ -24,17 +24,10 @@ def _h2norm_slycot(sys, print_warning=True):
     slycot.ab13bd
 
     """
-    # See: https://github.com/python-control/Slycot/issues/199
     try:
-        from slycot import ab13bd
+        from .slicot_compat import ab13bd, SlicotArithmeticError
     except ImportError:
-        ct.ControlSlycot("Can't find slycot module ab13bd")
-
-    try:
-        from slycot.exceptions import SlycotArithmeticError
-    except ImportError:
-        raise ct.ControlSlycot(
-            "Can't find slycot class SlycotArithmeticError")
+        raise ct.ControlSlicot("Can't find slicot module ab13bd")
 
     A, B, C, D = ct.ssdata(ct.ss(sys))
 
@@ -60,7 +53,7 @@ def _h2norm_slycot(sys, print_warning=True):
 
     try:
         norm = ab13bd(dico, jobn, n, m, p, A, B, C, D)
-    except SlycotArithmeticError as e:
+    except SlicotArithmeticError as e:
         if e.info == 3:
             if print_warning:
                 warnings.warn(
@@ -100,7 +93,7 @@ def system_norm(system, p=2, tol=1e-6, print_warning=True, method=None):
         Print warning message in case norm value may be uncertain.
     method : str, optional
         Set the method used for computing the result.  Current methods are
-        'slycot' and 'scipy'. If set to None (default), try 'slycot' first
+        'slicot' and 'scipy'. If set to None (default), try 'slicot' first
         and then 'scipy'.
 
     Returns
@@ -133,7 +126,7 @@ def system_norm(system, p=2, tol=1e-6, print_warning=True, method=None):
     D = G.D
 
     # Decide what method to use
-    method = ct.mateqn._slycot_or_scipy(method)
+    method = ct.mateqn._slicot_or_scipy(method)
 
     # -------------------
     # H2 norm computation
@@ -164,8 +157,8 @@ def system_norm(system, p=2, tol=1e-6, print_warning=True, method=None):
 
             else:
                 # Use slycot, if available, to compute (finite) norm
-                if method == 'slycot':
-                    return _h2norm_slycot(G, print_warning)
+                if method == 'slicot':
+                    return _h2norm_slicot(G, print_warning)
 
                 # Else use scipy
                 else:
@@ -210,8 +203,8 @@ def system_norm(system, p=2, tol=1e-6, print_warning=True, method=None):
                 return float('inf')
             else:
                 # Use slycot, if available, to compute (finite) norm
-                if method == 'slycot':
-                    return _h2norm_slycot(G, print_warning)
+                if method == 'slicot':
+                    return _h2norm_slicot(G, print_warning)
 
                 # Else use scipy
                 else:
@@ -259,7 +252,7 @@ def system_norm(system, p=2, tol=1e-6, print_warning=True, method=None):
                 return float('inf')
 
         # Use slycot, if available, to compute (finite) norm
-        if method == 'slycot':
+        if method == 'slicot':
             return ct.linfnorm(G, tol)[0]
 
         # Else use scipy

@@ -46,12 +46,12 @@ class TestConvert:
 
     @pytest.mark.usefixtures("legacy_plot_signature")
     @pytest.mark.parametrize("states", range(1, maxStates))
-    # If slycot is not installed, just check SISO
+    # If slicot is not installed, just check SISO
     @pytest.mark.parametrize("inputs",
-                             [1] + [pytest.param(i, marks=pytest.mark.slycot)
+                             [1] + [pytest.param(i, marks=pytest.mark.slicot)
                                     for i in range(2, 5)])
     @pytest.mark.parametrize("outputs",
-                             [1] + [pytest.param(i, marks=pytest.mark.slycot)
+                             [1] + [pytest.param(i, marks=pytest.mark.slicot)
                                     for i in range(2, 5)])
     def testConvert(self, fixedseed, states, inputs, outputs):
         """Test state space to transfer function conversion.
@@ -150,14 +150,14 @@ class TestConvert:
                     ssorig_imag, tfxfrm_imag, decimal=5)
 
 
-    @pytest.mark.parametrize('have_slycot',
-                             [pytest.param(True, marks=pytest.mark.slycot),
-                              pytest.param(False, marks=pytest.mark.noslycot)])
-    def testConvertMIMO(self, have_slycot):
+    @pytest.mark.parametrize('have_slicot',
+                             [pytest.param(True, marks=pytest.mark.slicot),
+                              pytest.param(False, marks=pytest.mark.noslicot)])
+    def testConvertMIMO(self, have_slicot):
         """Test state space to transfer function conversion.
 
         Do a MIMO conversion and make sure that it is processed
-        correctly both with and without slycot
+        correctly both with and without slicot
 
         Example from issue gh-120, jgoppert
         """
@@ -171,7 +171,7 @@ class TestConvert:
                     [0.008, 1.39, 48.78]]])
 
         # Convert to state space and look for an error
-        if not have_slycot:
+        if not have_slicot:
             with pytest.raises(ControlMIMONotImplemented):
                 tf2ss(tsys)
         else:
@@ -219,7 +219,7 @@ class TestConvert:
         np.testing.assert_allclose(numref,
                                    np.array(gtf.num) / np.array(gtf.den))
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def testTf2SsDuplicatePoles(self):
         """Tests for 'too few poles for MIMO tf gh-111'"""
         num = [[[1], [0]],
@@ -230,7 +230,7 @@ class TestConvert:
         s = ss(g)
         np.testing.assert_allclose(g.poles(), s.poles())
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def test_tf2ss_robustness(self):
         """Unit test to make sure that tf2ss is working correctly. gh-240"""
         num =  [ [[0], [1]],           [[1],   [0]] ]

@@ -393,7 +393,7 @@ def test_siso_disk_margin():
     DM = disk_margins(L, omega, skew=1.0)[0]
     assert_allclose([DM], [SM], atol=0.01)
 
-@pytest.mark.slycot
+@pytest.mark.slicot
 def test_mimo_disk_margin():
     # Frequencies of interest
     omega = np.logspace(-1, 3, 1001)
@@ -417,9 +417,9 @@ def test_mimo_disk_margin():
     assert_allclose([DPMi], [21.26], atol=0.1) # disk-based phase margin of 21.26 deg
 
 
-@pytest.mark.noslycot
+@pytest.mark.noslicot
 def test_mimo_disk_margin_exception():
-    # Slycot not installed.  Should throw exception.
+    # Slicot not installed.  Should throw exception.
     # Frequencies of interest
     omega = np.logspace(-1, 3, 1001)
 
@@ -428,7 +428,7 @@ def test_mimo_disk_margin_exception():
     K = ss([], [], [], [[1, -2], [0, 1]]) # controller
     Lo = P * K # loop transfer function, broken at plant output
     with pytest.raises(ControlMIMONotImplemented,\
-                       match="Need slycot to compute MIMO disk_margins"):
+                       match="Need slicot to compute MIMO disk_margins"):
         DMo, DGMo, DPMo = disk_margins(Lo, omega, skew=0.0)
 
 def test_siso_disk_margin_return_all():
@@ -449,7 +449,7 @@ def test_siso_disk_margin_return_all():
         atol=0.1) # disk-based phase margin of 25.8 deg
 
 
-@pytest.mark.slycot
+@pytest.mark.slicot
 def test_mimo_disk_margin_return_all():
     # Frequencies of interest
     omega = np.logspace(-1, 3, 1001)

@@ -9,7 +9,7 @@ from control.robust import augw, h2syn, hinfsyn, mixsyn
 
 class TestHinf:
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def testHinfsyn(self):
         """Test hinfsyn"""
         p = ss(-1, [[1, 1]], [[1], [1]], [[0, 1], [1, 0]])
@@ -31,7 +31,7 @@ class TestHinf:
 
 class TestH2:
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def testH2syn(self):
         """Test h2syn"""
         p = ss(-1, [[1, 1]], [[1], [1]], [[0, 1], [1, 0]])
@@ -70,7 +70,7 @@ class TestAugw:
                                  "sys 2:\n"
                                  "{}".format(maxnum, g, h))
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def testSisoW1(self):
         """SISO plant with S weighting"""
         g = ss([-1.], [1.], [1.], [1.])
@@ -87,7 +87,7 @@ class TestAugw:
         # u->v should be -g
         self.siso_almost_equal(-g, p[1, 1])
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def testSisoW2(self):
         """SISO plant with KS weighting"""
         g = ss([-1.], [1.], [1.], [1.])
@@ -104,7 +104,7 @@ class TestAugw:
         # u->v should be -g
         self.siso_almost_equal(-g, p[1, 1])
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def testSisoW3(self):
         """SISO plant with T weighting"""
         g = ss([-1.], [1.], [1.], [1.])
@@ -121,7 +121,7 @@ class TestAugw:
         # u->v should be -g
         self.siso_almost_equal(-g, p[1, 1])
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def testSisoW123(self):
         """SISO plant with all weights"""
         g = ss([-1.], [1.], [1.], [1.])
@@ -148,7 +148,7 @@ class TestAugw:
         # u->v should be -g
         self.siso_almost_equal(-g, p[3, 1])
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def testMimoW1(self):
         """MIMO plant with S weighting"""
         g = ss([[-1., -2], [-3, -4]],
@@ -180,7 +180,7 @@ class TestAugw:
         self.siso_almost_equal(-g[1, 0], p[3, 2])
         self.siso_almost_equal(-g[1, 1], p[3, 3])
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def testMimoW2(self):
         """MIMO plant with KS weighting"""
         g = ss([[-1., -2], [-3, -4]],
@@ -212,7 +212,7 @@ class TestAugw:
         self.siso_almost_equal(-g[1, 0], p[3, 2])
         self.siso_almost_equal(-g[1, 1], p[3, 3])
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def testMimoW3(self):
         """MIMO plant with T weighting"""
         g = ss([[-1., -2], [-3, -4]],
@@ -244,7 +244,7 @@ class TestAugw:
         self.siso_almost_equal(-g[1, 0], p[3, 2])
         self.siso_almost_equal(-g[1, 1], p[3, 3])
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def testMimoW123(self):
         """MIMO plant with all weights"""
         g = ss([[-1., -2], [-3, -4]],
@@ -306,7 +306,7 @@ class TestAugw:
         self.siso_almost_equal(-g[1, 0], p[7, 2])
         self.siso_almost_equal(-g[1, 1], p[7, 3])
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def testErrors(self):
         """Error cases handled"""
         from control import augw, ss
@@ -329,7 +329,7 @@ class TestMixsyn:
     """Test control.robust.mixsyn"""
 
     # it's a relatively simple wrapper; compare results with augw, hinfsyn
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def testSiso(self):
         """mixsyn with SISO system"""
         # Skogestad+Postlethwaite, Multivariable Feedback Control, 1st Ed., Example 2.11

@@ -997,7 +997,7 @@ class TestXferFcn:
         np.testing.assert_allclose(hm.num[0][0], hr.num[0][0])
         np.testing.assert_allclose(hr.dt, hm.dt)
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def test_state_space_conversion_mimo(self):
         """Test conversion of a single input, two-output state-space
         system against the same TF"""

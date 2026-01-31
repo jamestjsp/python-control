@@ -1,6 +1,6 @@
-"""slycot_convert_test.py - test SLICOT-based conversions
+"""slicot_convert_test.py - test SLICOT-based conversions
 
-RMM, 30 Mar 2011 (based on TestSlycot from v0.4a)
+RMM, 30 Mar 2011 (based on TestSlicot from v0.4a)
 """
 
 import numpy as np
@@ -20,12 +20,12 @@ def fixedseed():
     np.random.seed(0)
 
 
-@pytest.mark.slycot
+@pytest.mark.slicot
 @pytest.mark.usefixtures("fixedseed")
-class TestSlycot:
-    """Test Slycot system conversion
+class TestSlicot:
+    """Test slicot system conversion
 
-    TestSlycot compares transfer function and state space conversions for
+    TestSlicot compares transfer function and state space conversions for
     various numbers of inputs,outputs and states.
     1. Usually passes for SISO systems of any state dim, occasonally,
        there will be a dimension mismatch if the original randomly
@@ -72,7 +72,7 @@ class TestSlycot:
         comparison of transfer function coefficients.
         Similar to convert_test, but tests at a lower level.
         """
-        from slycot import tb04ad, td04ad
+        from control.slicot_compat import tb04ad, td04ad
 
         ssOriginal = rss(states, outputs, inputs)
         if (verbose):
@@ -135,7 +135,7 @@ class TestSlycot:
         original SS. They generally are different realizations but have same
         freq resp. Currently this test may only be applied to SISO systems.
         """
-        from slycot import tb04ad, td04ad
+        from control.slicot_compat import tb04ad, td04ad
 
         ssOriginal = rss(states, outputs, inputs)
 

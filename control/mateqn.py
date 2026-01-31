@@ -17,42 +17,34 @@ import scipy as sp
 from numpy import eye, finfo, inexact
 from scipy.linalg import eigvals, solve
 
-from .exception import ControlArgument, ControlDimension, ControlSlycot, \
-    slycot_check
+from .exception import ControlArgument, ControlDimension, ControlSlicot, \
+    slicot_check
 
-# Make sure we have access to the right Slycot routines
+# Make sure we have access to the right slicot routines
 try:
-    from slycot.exceptions import SlycotResultWarning
+    from .slicot_compat import SlicotResultWarning
 except ImportError:
-    SlycotResultWarning = UserWarning
+    SlicotResultWarning = UserWarning
 
 try:
-    from slycot import sb03md57
-
-    # wrap without the deprecation warning
-    def sb03md(n, C, A, U, dico, job='X', fact='N', trana='N', ldwork=None):
-        ret = sb03md57(A, U, C, dico, job, fact, trana, ldwork)
-        return ret[2:]
+    from .slicot_compat import sb03md
 except ImportError:
-    try:
-        from slycot import sb03md
-    except ImportError:
-        sb03md = None
+    sb03md = None
 
 try:
-    from slycot import sb04md
+    from .slicot_compat import sb04md
 except ImportError:
     sb04md = None
 
 try:
-    from slycot import sb04qd
+    from .slicot_compat import sb04qd
 except ImportError:
-    sb0qmd = None
+    sb04qd = None
 
 try:
-    from slycot import sg03ad
+    from .slicot_compat import sg03ad
 except ImportError:
-    sb04ad = None
+    sg03ad = None
 
 __all__ = ['lyap', 'dlyap', 'dare', 'care']
 
@@ -95,7 +87,7 @@ def lyap(A, Q, C=None, E=None, method=None):
         If present, solve the generalized Lyapunov equation.
     method : str, optional
         Set the method used for computing the result.  Current methods are
-        'slycot' and 'scipy'.  If set to None (default), try 'slycot' first
+        'slicot' and 'scipy'.  If set to None (default), try 'slicot' first
         and then 'scipy'.
 
     Returns
@@ -105,12 +97,12 @@ def lyap(A, Q, C=None, E=None, method=None):
 
     """
     # Decide what method to use
-    method = _slycot_or_scipy(method)
-    if method == 'slycot':
+    method = _slicot_or_scipy(method)
+    if method == 'slicot':
         if sb03md is None:
-            raise ControlSlycot("Can't find slycot module 'sb03md'")
+            raise ControlSlicot("Can't find slicot module 'sb03md'")
         if sb04md is None:
-            raise ControlSlycot("Can't find slycot module 'sb04md'")
+            raise ControlSlicot("Can't find slicot module 'sb04md'")
 
     # Reshape input arrays
     A = np.array(A, ndmin=2)
@@ -136,9 +128,9 @@ def lyap(A, Q, C=None, E=None, method=None):
             # Solve the Lyapunov equation using SciPy
             return sp.linalg.solve_continuous_lyapunov(A, -Q)
 
-        # Solve the Lyapunov equation by calling Slycot function sb03md
+        # Solve the Lyapunov equation by calling slicot function sb03md
         with warnings.catch_warnings():
-            warnings.simplefilter("error", category=SlycotResultWarning)
+            warnings.simplefilter("error", category=SlicotResultWarning)
             X, scale, sep, ferr, w = \
                 sb03md(n, -Q, A, eye(n, n), 'C', trana='T')
 
@@ -152,7 +144,7 @@ def lyap(A, Q, C=None, E=None, method=None):
             # Solve the Sylvester equation using SciPy
             return sp.linalg.solve_sylvester(A, Q, -C)
 
-        # Solve the Sylvester equation by calling the Slycot function sb04md
+        # Solve the Sylvester equation by calling the slicot function sb04md
         X = sb04md(n, m, A, Q, -C)
 
     # Solve the generalized Lyapunov equation
@@ -165,17 +157,14 @@ def lyap(A, Q, C=None, E=None, method=None):
             raise ControlArgument(
                 "method='scipy' not valid for generalized Lyapunov equation")
 
-        # Make sure we have access to the write Slycot routine
-        try:
-            from slycot import sg03ad
+        # Make sure we have access to the right slicot routine
+        if sg03ad is None:
+            raise ControlSlicot("Can't find slicot module 'sg03ad'")
 
-        except ImportError:
-            raise ControlSlycot("Can't find slycot module 'sg03ad'")
-
-        # Solve the generalized Lyapunov equation by calling Slycot
+        # Solve the generalized Lyapunov equation by calling slicot
         # function sg03ad
         with warnings.catch_warnings():
-            warnings.simplefilter("error", category=SlycotResultWarning)
+            warnings.simplefilter("error", category=SlicotResultWarning)
             A, E, Q, Z, X, scale, sep, ferr, alphar, alphai, beta = \
                 sg03ad('C', 'B', 'N', 'T', 'L', n,
                        A, E, eye(n, n), eye(n, n), -Q)
@@ -221,7 +210,7 @@ def dlyap(A, Q, C=None, E=None, method=None):
         If present, solve the generalized Lyapunov equation.
     method : str, optional
         Set the method used for computing the result.  Current methods are
-        'slycot' and 'scipy'.  If set to None (default), try 'slycot' first
+        'slicot' and 'scipy'.  If set to None (default), try 'slicot' first
         and then 'scipy'.
 
     Returns
@@ -231,16 +220,16 @@ def dlyap(A, Q, C=None, E=None, method=None):
 
     """
     # Decide what method to use
-    method = _slycot_or_scipy(method)
+    method = _slicot_or_scipy(method)
 
-    if method == 'slycot':
-        # Make sure we have access to the right slycot routines
+    if method == 'slicot':
+        # Make sure we have access to the right slicot routines
         if sb03md is None:
-            raise ControlSlycot("Can't find slycot module 'sb03md'")
+            raise ControlSlicot("Can't find slicot module 'sb03md'")
         if sb04qd is None:
-            raise ControlSlycot("Can't find slycot module 'sb04qd'")
+            raise ControlSlicot("Can't find slicot module 'sb04qd'")
         if sg03ad is None:
-            raise ControlSlycot("Can't find slycot module 'sg03ad'")
+            raise ControlSlicot("Can't find slicot module 'sg03ad'")
 
     # Reshape input arrays
     A = np.array(A, ndmin=2)
@@ -266,9 +255,9 @@ def dlyap(A, Q, C=None, E=None, method=None):
             # Solve the Lyapunov equation using SciPy
             return sp.linalg.solve_discrete_lyapunov(A, Q)
 
-        # Solve the Lyapunov equation by calling the Slycot function sb03md
+        # Solve the Lyapunov equation by calling the slicot function sb03md
         with warnings.catch_warnings():
-            warnings.simplefilter("error", category=SlycotResultWarning)
+            warnings.simplefilter("error", category=SlicotResultWarning)
             X, scale, sep, ferr, w = \
                 sb03md(n, -Q, A, eye(n, n), 'D', trana='T')
 
@@ -282,7 +271,7 @@ def dlyap(A, Q, C=None, E=None, method=None):
             raise ControlArgument(
                 "method='scipy' not valid for Sylvester equation")
 
-        # Solve the Sylvester equation by calling Slycot function sb04qd
+        # Solve the Sylvester equation by calling slicot function sb04qd
         X = sb04qd(n, m, -A, Q.T, C)
 
     # Solve the generalized Lyapunov equation
@@ -295,10 +284,10 @@ def dlyap(A, Q, C=None, E=None, method=None):
             raise ControlArgument(
                 "method='scipy' not valid for generalized Lyapunov equation")
 
-        # Solve the generalized Lyapunov equation by calling Slycot
+        # Solve the generalized Lyapunov equation by calling slicot
         # function sg03ad
         with warnings.catch_warnings():
-            warnings.simplefilter("error", category=SlycotResultWarning)
+            warnings.simplefilter("error", category=SlicotResultWarning)
             A, E, Q, Z, X, scale, sep, ferr, alphar, alphai, beta = \
                 sg03ad('D', 'B', 'N', 'T', 'L', n,
                        A, E, eye(n, n), eye(n, n), -Q)
@@ -347,10 +336,10 @@ def care(A, B, Q, R=None, S=None, E=None, stabilizing=True, method=None,
         Input matrices for generalized Riccati equation.
     method : str, optional
         Set the method used for computing the result.  Current methods are
-        'slycot' and 'scipy'.  If set to None (default), try 'slycot' first
+        'slicot' and 'scipy'.  If set to None (default), try 'slicot' first
         and then 'scipy'.
     stabilizing : bool, optional
-        If `method` is 'slycot', unstabilized eigenvalues will be returned
+        If `method` is 'slicot', unstabilized eigenvalues will be returned
         in the initial elements of `L`.  Not supported for 'scipy'.
 
     Returns
@@ -364,7 +353,7 @@ def care(A, B, Q, R=None, S=None, E=None, stabilizing=True, method=None,
 
     """
     # Decide what method to use
-    method = _slycot_or_scipy(method)
+    method = _slicot_or_scipy(method)
 
     # Reshape input arrays
     A = np.array(A, ndmin=2)
@@ -399,18 +388,18 @@ def care(A, B, Q, R=None, S=None, E=None, stabilizing=True, method=None,
             E, _ = np.linalg.eig(A - B @ K)
             return X, E, K
 
-        # Make sure we can import required Slycot routines
+        # Make sure we can import required slicot routines
         try:
-            from slycot import sb02md
+            from .slicot_compat import sb02md
         except ImportError:
-            raise ControlSlycot("Can't find slycot module 'sb02md'")
+            raise ControlSlicot("Can't find slicot module 'sb02md'")
 
         try:
-            from slycot import sb02mt
+            from .slicot_compat import sb02mt
         except ImportError:
-            raise ControlSlycot("Can't find slycot module 'sb02mt'")
+            raise ControlSlicot("Can't find slicot module 'sb02mt'")
 
-        # Solve the standard algebraic Riccati equation by calling Slycot
+        # Solve the standard algebraic Riccati equation by calling slicot
         # functions sb02mt and sb02md
         A_b, B_b, Q_b, R_b, L_b, ipiv, oufact, G = sb02mt(n, m, B, R)
 
@@ -445,17 +434,17 @@ def care(A, B, Q, R=None, S=None, E=None, stabilizing=True, method=None,
             eigs, _ = sp.linalg.eig(A - B @ K, E)
             return X, eigs, K
 
-        # Make sure we can find the required Slycot routine
+        # Make sure we can find the required slicot routine
         try:
-            from slycot import sg02ad
+            from .slicot_compat import sg02ad
         except ImportError:
-            raise ControlSlycot("Can't find slycot module sg02ad")
+            raise ControlSlicot("Can't find slicot module sg02ad")
 
         # Solve the generalized algebraic Riccati equation by calling the
-        # Slycot function sg02ad
+        # slicot function sg02ad
         with warnings.catch_warnings():
             sort = 'S' if stabilizing else 'U'
-            warnings.simplefilter("error", category=SlycotResultWarning)
+            warnings.simplefilter("error", category=SlicotResultWarning)
             rcondu, X, alfar, alfai, beta, S_o, T, U, iwarn = \
                 sg02ad('C', 'B', 'N', 'U', 'N', 'N', sort,
                        'R', n, m, 0, A, E, B, Q, R, S)
@@ -503,10 +492,10 @@ def dare(A, B, Q, R, S=None, E=None, stabilizing=True, method=None,
         Input matrices for generalized Riccati equation.
     method : str, optional
         Set the method used for computing the result.  Current methods are
-        'slycot' and 'scipy'.  If set to None (default), try 'slycot' first
+        'slicot' and 'scipy'.  If set to None (default), try 'slicot' first
         and then 'scipy'.
     stabilizing : bool, optional
-        If `method` is 'slycot', unstabilized eigenvalues will be returned
+        If `method` is 'slicot', unstabilized eigenvalues will be returned
         in the initial elements of `L`.  Not supported for 'scipy'.
 
     Returns
@@ -520,7 +509,7 @@ def dare(A, B, Q, R, S=None, E=None, stabilizing=True, method=None,
 
     """
     # Decide what method to use
-    method = _slycot_or_scipy(method)
+    method = _slicot_or_scipy(method)
 
     # Reshape input arrays
     A = np.array(A, ndmin=2)
@@ -564,21 +553,21 @@ def dare(A, B, Q, R, S=None, E=None, stabilizing=True, method=None,
 
         return X, L, G
 
-    # Make sure we can import required Slycot routine
+    # Make sure we can import required slicot routine
     try:
-        from slycot import sg02ad
+        from .slicot_compat import sg02ad
     except ImportError:
-        raise ControlSlycot("Can't find slycot module sg02ad")
+        raise ControlSlicot("Can't find slicot module sg02ad")
 
     # Initialize optional matrices
     S = np.zeros((n, m)) if S is None else np.array(S, ndmin=2)
     E = np.eye(A.shape[0]) if E is None else np.array(E, ndmin=2)
 
     # Solve the generalized algebraic Riccati equation by calling the
-    # Slycot function sg02ad
+    # slicot function sg02ad
     sort = 'S' if stabilizing else 'U'
     with warnings.catch_warnings():
-        warnings.simplefilter("error", category=SlycotResultWarning)
+        warnings.simplefilter("error", category=SlicotResultWarning)
         rcondu, X, alfar, alfai, beta, S_o, T, U, iwarn = \
             sg02ad('D', 'B', 'N', 'U', 'N', 'N', sort,
                    'R', n, m, 0, A, E, B, Q, R, S)
@@ -595,10 +584,10 @@ def dare(A, B, Q, R, S=None, E=None, stabilizing=True, method=None,
 
 
 # Utility function to decide on method to use
-def _slycot_or_scipy(method):
-    if method == 'slycot' or (method is None and slycot_check()):
-        return 'slycot'
-    elif method == 'scipy' or (method is None and not slycot_check()):
+def _slicot_or_scipy(method):
+    if method == 'slicot' or (method is None and slicot_check()):
+        return 'slicot'
+    elif method == 'scipy' or (method is None and not slicot_check()):
         return 'scipy'
     else:
         raise ControlArgument("Unknown method %s" % method)

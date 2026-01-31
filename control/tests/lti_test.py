@@ -57,7 +57,7 @@ class TestLTI:
         assert issiso(sys)
         assert issiso(sys, strict=True)
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def test_issiso_mimo(self):
         # MIMO transfer function
         sys = tf([[[-1, 41], [1]], [[1, 2], [3, 4]]],
@@ -190,7 +190,7 @@ class TestLTI:
 
     def p(*args):
         # convenience for parametrize below
-        return pytest.param(*args, marks=pytest.mark.slycot)
+        return pytest.param(*args, marks=pytest.mark.slicot)
 
     @pytest.mark.usefixtures("editsdefaults")
     @pytest.mark.parametrize("fcn", [ct.ss, ct.tf, ct.frd])

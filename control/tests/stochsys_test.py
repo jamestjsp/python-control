@@ -28,7 +28,7 @@ def check_DLQE(L, P, poles, G, QN, RN):
     np.testing.assert_almost_equal(poles, poles_expected)
 
 @pytest.mark.parametrize("method", [None,
-                                    pytest.param('slycot', marks=pytest.mark.slycot),
+                                    pytest.param('slicot', marks=pytest.mark.slicot),
                                     'scipy'])
 def test_LQE(method):
     A, G, C, QN, RN = (np.array([[X]]) for X in [0., .1, 1., 10., 2.])
@@ -71,14 +71,14 @@ def test_lqe_call_format(cdlqe):
     with pytest.raises(ct.ControlArgument, match="not enough input"):
         L, P, E = cdlqe(sys.A, sys.C)
 
-    # First argument is the wrong type (use SISO for non-slycot tests)
+    # First argument is the wrong type (use SISO for non-slicot tests)
     sys_tf = tf(rss(3, 1, 1))
     sys_tf.dt = None        # treat as either continuous or discrete time
     with pytest.raises(ct.ControlArgument, match="LTI system must be"):
         L, P, E = cdlqe(sys_tf, Q, R)
 
 @pytest.mark.parametrize("method", [None,
-                                    pytest.param('slycot', marks=pytest.mark.slycot),
+                                    pytest.param('slicot', marks=pytest.mark.slicot),
                                     'scipy'])
 def test_DLQE(method):
     A, G, C, QN, RN = (np.array([[X]]) for X in [0., .1, 1., 10., 2.])

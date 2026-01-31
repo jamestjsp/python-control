@@ -102,7 +102,7 @@ def test_finite_horizon_simple(method):
 # optimal control problem with terminal cost set to LQR "cost to go"
 # gives the same answer as LQR.
 #
-@pytest.mark.slycot
+@pytest.mark.slicot
 def test_discrete_lqr():
     # oscillator model defined in 2D
     # Source: https://www.mpt3.org/UI/RegulationProblem

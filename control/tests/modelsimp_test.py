@@ -19,7 +19,7 @@ from control.modelsimp import balred, eigensys_realization, hsvd, markov, \
 class TestModelsimp:
     """Test model reduction functions"""
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def testHSVD(self):
         A = np.array([[1., -2.], [3., -4.]])
         B = np.array([[5.], [7.]])
@@ -389,7 +389,7 @@ class TestModelsimp:
         np.testing.assert_array_almost_equal(rsys.D, Drtrue)
 
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def testBalredTruncate(self):
         # controlable canonical realization computed in matlab for the transfer
         # function:
@@ -414,7 +414,7 @@ class TestModelsimp:
         Crtrue = np.array([[0.9057, 0.4068]])
         Drtrue = np.array([[0.]])
 
-        # Look for possible changes in state in slycot
+        # Look for possible changes in state in slicot
         T1 = np.array([[1, 0], [0, -1]])
         T2 = np.array([[-1, 0], [0, 1]])
         T3 = np.array([[0, 1], [1, 0]])
@@ -430,7 +430,7 @@ class TestModelsimp:
         np.testing.assert_array_almost_equal(Cr, Crtrue, decimal=4)
         np.testing.assert_array_almost_equal(Dr, Drtrue, decimal=4)
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def testBalredMatchDC(self):
         # controlable canonical realization computed in matlab for the transfer
         # function:
@@ -457,7 +457,7 @@ class TestModelsimp:
         Crtrue = np.array([[1.36235673, 1.03114388]])
         Drtrue = np.array([[-0.08383902]])
 
-        # Look for possible changes in state in slycot
+        # Look for possible changes in state in slicot
         T1 = np.array([[1, 0], [0, -1]])
         T2 = np.array([[-1, 0], [0, 1]])
         T3 = np.array([[0, 1], [1, 0]])

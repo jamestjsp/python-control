@@ -11,7 +11,7 @@ from math import pi
 
 import control as ct
 from control import poles, rss, ss, tf
-from control.exception import ControlDimension, ControlSlycot, \
+from control.exception import ControlDimension, ControlSlicot, \
     ControlArgument
 from control.mateqn import care, dare
 from control.statefbk import (ctrb, obsv, place, place_varga, lqr, dlqr,
@@ -127,7 +127,7 @@ class TestStatefbk:
         Wo = np.transpose(obsv(A, C))
         np.testing.assert_array_almost_equal(Wc,Wo)
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def testGramWc(self):
         A = np.array([[1., -2.], [3., -4.]])
         B = np.array([[5., 6.], [7., 8.]])
@@ -143,7 +143,7 @@ class TestStatefbk:
         Wc = gram(sysd, 'c')
         np.testing.assert_array_almost_equal(Wc, Wctrue)
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def testGramWc2(self):
         A = np.array([[1., -2.], [3., -4.]])
         B = np.array([[5.], [7.]])
@@ -160,7 +160,7 @@ class TestStatefbk:
         Wc = gram(sysd, 'c')
         np.testing.assert_array_almost_equal(Wc, Wctrue)
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def testGramRc(self):
         A = np.array([[1., -2.], [3., -4.]])
         B = np.array([[5., 6.], [7., 8.]])
@@ -176,7 +176,7 @@ class TestStatefbk:
         Rc = gram(sysd, 'cf')
         np.testing.assert_array_almost_equal(Rc, Rctrue)
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def testGramWo(self):
         A = np.array([[1., -2.], [3., -4.]])
         B = np.array([[5., 6.], [7., 8.]])
@@ -192,7 +192,7 @@ class TestStatefbk:
         Wo = gram(sysd, 'o')
         np.testing.assert_array_almost_equal(Wo, Wotrue)
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def testGramWo2(self):
         A = np.array([[1., -2.], [3., -4.]])
         B = np.array([[5.], [7.]])
@@ -208,7 +208,7 @@ class TestStatefbk:
         Wo = gram(sysd, 'o')
         np.testing.assert_array_almost_equal(Wo, Wotrue)
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def testGramRo(self):
         A = np.array([[1., -2.], [3., -4.]])
         B = np.array([[5., 6.], [7., 8.]])
@@ -317,7 +317,7 @@ class TestStatefbk:
         with pytest.raises(ValueError):
             place(A, B, P_repeated)
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def testPlace_varga_continuous(self):
         """
         Check that we can place eigenvalues for dtime=False
@@ -344,7 +344,7 @@ class TestStatefbk:
         self.checkPlaced(P, P_placed)
 
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def testPlace_varga_continuous_partial_eigs(self):
         """
         Check that we are able to use the alpha parameter to only place
@@ -364,7 +364,7 @@ class TestStatefbk:
         # No guarantee of the ordering, so sort them
         self.checkPlaced(P_expected, P_placed)
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def testPlace_varga_discrete(self):
         """
         Check that we can place poles using dtime=True (discrete time)
@@ -378,7 +378,7 @@ class TestStatefbk:
         # No guarantee of the ordering, so sort them
         self.checkPlaced(P, P_placed)
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def testPlace_varga_discrete_partial_eigs(self):
         """"
         Check that we can only assign a single eigenvalue in the discrete
@@ -413,7 +413,7 @@ class TestStatefbk:
 
     @pytest.mark.parametrize("method",
                              [None,
-                              pytest.param('slycot', marks=pytest.mark.slycot),
+                              pytest.param('slicot', marks=pytest.mark.slicot),
                               'scipy'])
     def test_LQR_integrator(self, method):
         A, B, Q, R = (np.array([[X]]) for X in [0., 1., 10., 2.])
@@ -422,7 +422,7 @@ class TestStatefbk:
 
     @pytest.mark.parametrize("method",
                              [None,
-                              pytest.param('slycot', marks=pytest.mark.slycot),
+                              pytest.param('slicot', marks=pytest.mark.slicot),
                               'scipy'])
     def test_LQR_3args(self, method):
         sys = ss(0., 1., 1., 0.)
@@ -432,7 +432,7 @@ class TestStatefbk:
 
     @pytest.mark.parametrize("method",
                              [None,
-                              pytest.param('slycot', marks=pytest.mark.slycot),
+                              pytest.param('slicot', marks=pytest.mark.slicot),
                               'scipy'])
     def test_DLQR_3args(self, method):
         dsys = ss(0., 1., 1., 0., .1)
@@ -451,12 +451,12 @@ class TestStatefbk:
         with pytest.raises(ControlArgument, match="Unknown method"):
             K, S, poles = cdlqr(A, B, Q, R, method='nosuchmethod')
 
-    @pytest.mark.noslycot
+    @pytest.mark.noslicot
     @pytest.mark.parametrize("cdlqr", [lqr, dlqr])
-    def test_lqr_slycot_not_installed(self, cdlqr):
+    def test_lqr_slicot_not_installed(self, cdlqr):
         A, B, Q, R = 0, 1, 10, 2
-        with pytest.raises(ControlSlycot, match="Can't find slycot"):
-            K, S, poles = cdlqr(A, B, Q, R, method='slycot')
+        with pytest.raises(ControlSlicot, match="Can't find slicot"):
+            K, S, poles = cdlqr(A, B, Q, R, method='slicot')
 
     @pytest.mark.xfail(reason="warning not implemented")
     def testLQR_warning(self):
@@ -515,7 +515,7 @@ class TestStatefbk:
         with pytest.raises(ct.ControlArgument, match="not enough input"):
             K, S, E = cdlqr(sys.A, sys.B)
 
-        # First argument is the wrong type (use SISO for non-slycot tests)
+        # First argument is the wrong type (use SISO for non-slicot tests)
         sys_tf = tf(rss(3, 1, 1))
         sys_tf.dt = None        # treat as either continuous or discrete time
         with pytest.raises(ct.ControlArgument, match="LTI system must be"):
@@ -540,13 +540,13 @@ class TestStatefbk:
         with pytest.warns(UserWarning):
             (K, S, E) = dlqr(A, B, Q, R, N)
 
-    @pytest.mark.parametrize('have_slycot',
-                             [pytest.param(True, marks=pytest.mark.slycot),
-                              pytest.param(False, marks=pytest.mark.noslycot)])
+    @pytest.mark.parametrize('have_slicot',
+                             [pytest.param(True, marks=pytest.mark.slicot),
+                              pytest.param(False, marks=pytest.mark.noslicot)])
     @pytest.mark.parametrize("method",
-                             [pytest.param('slycot', marks=pytest.mark.slycot),
+                             [pytest.param('slicot', marks=pytest.mark.slicot),
                               'scipy'])
-    def test_care(self, have_slycot, method):
+    def test_care(self, have_slicot, method):
         """Test stabilizing and anti-stabilizing feedback, continuous"""
         A = np.diag([1, -1])
         B = np.identity(2)
@@ -558,7 +558,7 @@ class TestStatefbk:
         X, L, G = care(A, B, Q, R, S, E, stabilizing=True, method=method)
         assert np.all(np.real(L) < 0)
 
-        if have_slycot and method=='slycot':
+        if have_slicot and method=='slicot':
             X, L, G = care(A, B, Q, R, S, E, stabilizing=False, method=method)
             assert np.all(np.real(L) > 0)
         else:
@@ -567,7 +567,7 @@ class TestStatefbk:
 
     @pytest.mark.parametrize(
         "stabilizing",
-        [True, pytest.param(False, marks=pytest.mark.slycot)])
+        [True, pytest.param(False, marks=pytest.mark.slicot)])
     def test_dare(self, stabilizing):
         """Test stabilizing and anti-stabilizing feedback, discrete"""
         A = np.diag([0.5, 2])
@@ -790,10 +790,10 @@ class TestStatefbk:
         np.testing.assert_allclose(clsys0_lin.A, clsys2_lin.A)
 
 
-    @pytest.mark.parametrize('have_slycot',
-                             [pytest.param(True, marks=pytest.mark.slycot),
-                              pytest.param(False, marks=pytest.mark.noslycot)])
-    def test_lqr_integral_continuous(self, have_slycot):
+    @pytest.mark.parametrize('have_slicot',
+                             [pytest.param(True, marks=pytest.mark.slicot),
+                              pytest.param(False, marks=pytest.mark.noslicot)])
+    def test_lqr_integral_continuous(self, have_slicot):
         # Generate a continuous-time system for testing
         sys = ct.rss(4, 4, 2, strictly_proper=True)
         sys.C = np.eye(4)       # reset output to be full state
@@ -855,7 +855,7 @@ class TestStatefbk:
         assert all(np.real(clsys.poles()) < 0)
 
         # Make sure controller infinite zero frequency gain
-        if have_slycot:
+        if have_slicot:
             ctrl_tf = tf(ctrl)
             assert abs(ctrl_tf(1e-9)[0][0]) > 1e6
             assert abs(ctrl_tf(1e-9)[1][1]) > 1e6

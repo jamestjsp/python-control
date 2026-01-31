@@ -15,7 +15,7 @@ import warnings
 # External packages and modules
 import numpy as np
 
-from .exception import ControlArgument, ControlDimension, ControlSlycot
+from .exception import ControlArgument, ControlDimension, ControlSlicot
 from .iosys import isctime, isdtime
 from .statefbk import gram
 from .statesp import StateSpace
@@ -295,7 +295,7 @@ def balanced_reduction(sys, orders, method='truncate', alpha=None):
     ValueError
         If `method` is not 'truncate' or 'matchdc'.
     ImportError
-        If slycot routine ab09ad, ab09md, or ab09nd is not found.
+        If slicot routine ab09ad, ab09md, or ab09nd is not found.
     ValueError
         If there are more unstable modes than any value in orders.
 
@@ -311,15 +311,15 @@ def balanced_reduction(sys, orders, method='truncate', alpha=None):
         raise ValueError("supported methods are 'truncate' or 'matchdc'")
     elif method == 'truncate':
         try:
-            from slycot import ab09ad, ab09md
+            from .slicot_compat import ab09ad, ab09md
         except ImportError:
-            raise ControlSlycot(
-                "can't find slycot subroutine ab09md or ab09ad")
+            raise ControlSlicot(
+                "can't find slicot subroutine ab09md or ab09ad")
     elif method == 'matchdc':
         try:
-            from slycot import ab09nd
+            from .slicot_compat import ab09nd
         except ImportError:
-            raise ControlSlycot("can't find slycot subroutine ab09nd")
+            raise ControlSlicot("can't find slicot subroutine ab09nd")
 
     # Check for ss system object, need a utility for this?
 
