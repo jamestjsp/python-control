@@ -47,17 +47,21 @@ class ControlNotImplemented(NotImplementedError):
     """Functionality is not yet implemented."""
     pass
 
-# Utility function to see if slicot is installed
+# Utility function to see if slicot or slycot is installed
 slicot_installed = None
 def slicot_check():
-    """Return True if slicot is installed, otherwise False."""
+    """Return True if slicot or slycot is installed, otherwise False."""
     global slicot_installed
     if slicot_installed is None:
         try:
             import slicot  # noqa: F401
             slicot_installed = True
-        except:
-            slicot_installed = False
+        except ImportError:
+            try:
+                import slycot  # noqa: F401
+                slicot_installed = True
+            except ImportError:
+                slicot_installed = False
     return slicot_installed
 
 

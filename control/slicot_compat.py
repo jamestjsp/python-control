@@ -1,19 +1,36 @@
-# slicot_compat.py - compatibility wrappers for slicot package
+# slicot_compat.py - compatibility wrappers for slicot/slycot packages
 #
 # This module provides wrappers around the slicot package functions to match
-# the API used by the older slycot package. This allows python-control to
-# use slicot (C11 translation with Python bindings) as a drop-in replacement.
+# the API used by the older slycot package. It also supports falling back to
+# slycot if slicot is not installed.
 
-"""Compatibility layer for slicot package.
+"""Compatibility layer for slicot/slycot packages.
 
 This module wraps slicot functions to match the slycot API, minimizing changes
-to existing code in python-control.
+to existing code in python-control. If slicot is not installed, it falls back
+to using slycot directly.
 """
 
-import slicot  # noqa: F401 - import at top level so ImportError is raised early
 import numpy as np
 
 from .exception import ControlArgument
+
+# Try to import slicot first (preferred), fall back to slycot
+_use_slicot = False
+_use_slycot = False
+
+try:
+    import slicot  # noqa: F401
+    _use_slicot = True
+except ImportError:
+    try:
+        import slycot  # noqa: F401
+        _use_slycot = True
+    except ImportError:
+        pass
+
+if not _use_slicot and not _use_slycot:
+    raise ImportError("Neither slicot nor slycot is installed")
 
 __all__ = [
     'SlicotResultWarning', 'SlicotArithmeticError',
@@ -1087,3 +1104,19 @@ def mb03rd(n, A, X, pmax=1.0, tol=0.0, ldwork=None):
     w = wr + 1j * wi
 
     return Aout, Xout, blsize[:nblcks], w
+
+
+# If using slycot (not slicot), overwrite with direct imports from slycot
+if _use_slycot and not _use_slicot:
+    from slycot import (  # noqa: F811
+        sb03md, sb03od, sb04md, sb04qd, sg03ad,
+        sb02md, sb02mt, sg02ad, sb01bd,
+        sb10ad, sb10hd, ab08nd,
+        ab09ad, ab09md, ab09nd,
+        ab13bd, ab13dd, ab13md,
+        tb01pd, tb04ad, tb05ad, td04ad, mb03rd,
+    )
+    from slycot.exceptions import (  # noqa: F811
+        SlycotResultWarning as SlicotResultWarning,
+        SlycotArithmeticError as SlicotArithmeticError,
+    )

@@ -27,7 +27,8 @@ jobs:
     - name: Install full dependencies
       shell: bash -l {0}
       run: |
-        mamba install cvxopt pandas slycot 
+        mamba install cvxopt pandas
+        pip install slicot 
 
     - name: Run doctest
       shell: bash -l {0}

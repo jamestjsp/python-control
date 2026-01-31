@@ -20,8 +20,9 @@ jobs:
            --quiet --yes \
            python=3.12 pip \
            numpy matplotlib scipy \
-           slycot pmw jupyter \
+           pmw jupyter \
            ipython!=9.0
+        conda run -n control-examples-env pip install slicot
 
     - name: Install from source
       run: |
