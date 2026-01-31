@@ -1542,11 +1542,13 @@ def _convert_to_transfer_function(
                     array(sys.B), array(sys.C), array(sys.D), tol1=0.0)
 
                 for i in range(sys.noutputs):
+                    # index contains the degree of each row's denominator
+                    deg_i = tfout[4][i]
                     for j in range(sys.ninputs):
-                        num[i][j] = list(tfout[6][i, j, :])
+                        num[i][j] = list(tfout[6][i, j, :deg_i+1])
                         # Each transfer function matrix row
                         # has a common denominator.
-                        den[i][j] = list(tfout[5][i, :])
+                        den[i][j] = list(tfout[5][i, :deg_i+1])
 
             except ImportError:
                 # If slicot not available, do conversion using sp.signal.ss2tf
