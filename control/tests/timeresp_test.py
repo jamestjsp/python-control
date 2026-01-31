@@ -453,7 +453,7 @@ class TestTimeresp:
     @pytest.mark.parametrize(
         "tsystem",
         ['mimo_ss_step_matlab',
-         pytest.param('mimo_tf_step_info', marks=pytest.mark.slycot)],
+         pytest.param('mimo_tf_step_info', marks=pytest.mark.slicot)],
         indirect=["tsystem"])
     def test_step_info_mimo(self, tsystem, systype, yfinal):
         """Test step info for MIMO systems."""
@@ -798,7 +798,7 @@ class TestTimeresp:
         np.testing.assert_array_almost_equal(yout, ytrue, decimal=6)
 
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def test_step_robustness(self):
         "Test robustness os step_response against denomiantors: gh-240"
         # Create 2 input, 2 output system
@@ -901,9 +901,9 @@ class TestTimeresp:
                               "siso_dtf2",
                               "siso_ss2_dtnone",  # undetermined timebase
                               "mimo_ss2",   # MIMO
-                              pytest.param("mimo_tf2", marks=pytest.mark.slycot),
+                              pytest.param("mimo_tf2", marks=pytest.mark.slicot),
                               "mimo_dss1",
-                              pytest.param("mimo_dtf1", marks=pytest.mark.slycot),
+                              pytest.param("mimo_dtf1", marks=pytest.mark.slicot),
                               ],
                              indirect=True)
     @pytest.mark.parametrize("fun", [step_response,
@@ -1034,7 +1034,7 @@ class TestTimeresp:
 
     def p(*args):
         # convenience for parametrize below
-        return pytest.param(*args, marks=pytest.mark.slycot)
+        return pytest.param(*args, marks=pytest.mark.slicot)
 
     @pytest.mark.usefixtures("editsdefaults")
     @pytest.mark.parametrize("fcn, nstate, nout, ninp, squeeze, shape1, shape2", [

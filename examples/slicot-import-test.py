@@ -1,12 +1,12 @@
-""" slycot-import-test.py
+""" slicot-import-test.py
 
-Simple example script to test Slycot import
+Simple example script to test slicot import
 RMM, 28 May 09
 """
 
 import numpy as np
 import control as ct
-from control.exception import slycot_check
+from control.exception import slicot_check
 
 # Parameters defining the system
 m = 250.0  # system mass
@@ -19,18 +19,18 @@ B = np.array([[0], [1/m], [1]])
 C = np.array([[1., 0, 1.]])
 sys = ct.ss(A, B, C, 0)
 
-# Python control may be used without slycot, for example for a pole placement.
+# Python control may be used without slicot, for example for a pole placement.
 # Eigenvalue placement
 w = [-3, -2, -1]
 K = ct.place(A, B, w)
 print("[python-control (from scipy)] K = ", K)
 print("[python-control (from scipy)] eigs = ", np.linalg.eig(A - B*K)[0])
 
-# Before using one of its routine, check that slycot is installed.
+# Before using one of its routine, check that slicot is installed.
 w = np.array([-3, -2, -1])
-if slycot_check():
+if slicot_check():
     # Import routine sb01bd used for pole placement.
-    from slycot import sb01bd
+    from control.slicot_compat import sb01bd
 
     n = 3        # Number of states
     m = 1        # Number of inputs
@@ -38,7 +38,7 @@ if slycot_check():
     alpha = 1    # Maximum threshold for eigen values
     dico = 'D'   # Discrete system
     _, _, _, _, _, K, _ = sb01bd(n, m, npp, alpha, A, B, w, dico, tol=0.0, ldwork=None)
-    print("[slycot] K = ", K)
-    print("[slycot] eigs = ", np.linalg.eig(A + B @ K)[0])
+    print("[slicot] K = ", K)
+    print("[slicot] eigs = ", np.linalg.eig(A + B @ K)[0])
 else:
-    print("Slycot is not installed.")
+    print("slicot is not installed.")

@@ -10,7 +10,7 @@ from numpy import poly, transpose, zeros_like
 from numpy.linalg import matrix_rank, solve
 from scipy.linalg import schur
 
-from .exception import ControlNotImplemented, ControlSlycot
+from .exception import ControlNotImplemented, ControlSlicot
 from .iosys import issiso
 from .statefbk import ctrb, obsv
 from .statesp import StateSpace, _convert_to_statespace
@@ -330,15 +330,15 @@ def _bdschur_condmax_search(aschur, tschur, condmax):
 
     Notes
     -----
-    Outputs as for slycot.mb03rd.
+    Outputs as for slicot.mb03rd.
 
     `aschur`, `tschur` are as returned by scipy.linalg.schur.
 
     """
     try:
-        from slycot import mb03rd
+        from .slicot_compat import mb03rd
     except ImportError:
-        raise ControlSlycot("can't find slycot module 'mb03rd'")
+        raise ControlSlicot("can't find slicot module 'mb03rd'")
 
     # see notes on RuntimeError below
     pmaxlower = None

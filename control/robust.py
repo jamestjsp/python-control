@@ -10,7 +10,7 @@ import warnings
 # External packages and modules
 import numpy as np
 
-from .exception import ControlSlycot
+from .exception import ControlSlicot
 from .statesp import StateSpace
 
 
@@ -34,7 +34,7 @@ def h2syn(P, nmeas, ncon):
     Raises
     ------
     ImportError
-        If slycot routine sb10hd is not loaded.
+        If slicot routine sb10hd is not loaded.
 
     See Also
     --------
@@ -67,9 +67,9 @@ def h2syn(P, nmeas, ncon):
     # TODO: Check for continous or discrete, only continuous supported right now
 
     try:
-        from slycot import sb10hd
+        from .slicot_compat import sb10hd
     except ImportError:
-        raise ControlSlycot("can't find slycot subroutine sb10hd")
+        raise ControlSlicot("can't find slicot subroutine sb10hd")
 
     n = np.size(P.A, 0)
     m = np.size(P.B, 1)
@@ -116,7 +116,7 @@ def hinfsyn(P, nmeas, ncon):
     Raises
     ------
     ImportError
-        If slycot routine sb10ad is not loaded.
+        If slicot routine sb10ad is not loaded.
 
     See Also
     --------
@@ -149,9 +149,9 @@ def hinfsyn(P, nmeas, ncon):
     # TODO: Check for continous or discrete, only continuous supported right now
 
     try:
-        from slycot import sb10ad
+        from .slicot_compat import sb10ad
     except ImportError:
-        raise ControlSlycot("can't find slycot subroutine sb10ad")
+        raise ControlSlicot("can't find slicot subroutine sb10ad")
 
     n = np.size(P.A, 0)
     m = np.size(P.B, 1)

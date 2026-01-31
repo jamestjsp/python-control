@@ -81,7 +81,7 @@ fun_notinstance = {
 
 def p(*args):
     # convenience for parametrize below
-    return pytest.param(*args, marks=pytest.mark.slycot)
+    return pytest.param(*args, marks=pytest.mark.slicot)
 
 
 @pytest.mark.parametrize("fun, args, kwargs", [

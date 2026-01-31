@@ -60,7 +60,7 @@ def test_freqresp_siso(ss_siso):
 
 
 @pytest.mark.filterwarnings(r"ignore:freqresp\(\) is deprecated")
-@pytest.mark.slycot
+@pytest.mark.slicot
 def test_freqresp_mimo_legacy(ss_mimo):
     """Test MIMO frequency response calls"""
     omega = np.linspace(10e-2, 10e2, 1000)
@@ -69,7 +69,7 @@ def test_freqresp_mimo_legacy(ss_mimo):
     ctrl.freqresp(tf_mimo, omega)
 
 
-@pytest.mark.slycot
+@pytest.mark.slicot
 def test_freqresp_mimo(ss_mimo):
     """Test MIMO frequency response calls"""
     omega = np.linspace(10e-2, 10e2, 1000)

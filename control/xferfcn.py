@@ -1519,8 +1519,8 @@ def _convert_to_transfer_function(
 
     elif isinstance(sys, StateSpace):
         if 0 == sys.nstates:
-            # Slycot doesn't like static SS->TF conversion, so handle
-            # it first.  Can't join this with the no-Slycot branch,
+            # slicot doesn't like static SS->TF conversion, so handle
+            # it first.  Can't join this with the no-slicot branch,
             # since that doesn't handle general MIMO systems
             num = [[[sys.D[i, j]] for j in range(sys.ninputs)]
                    for i in range(sys.noutputs)]
@@ -1534,9 +1534,9 @@ def _convert_to_transfer_function(
                    for i in range(sys.noutputs)]
 
             try:
-                # Use Slycot to make the transformation
+                # Use slicot to make the transformation
                 # Make sure to convert system matrices to NumPy arrays
-                from slycot import tb04ad
+                from .slicot_compat import tb04ad
                 tfout = tb04ad(
                     sys.nstates, sys.ninputs, sys.noutputs, array(sys.A),
                     array(sys.B), array(sys.C), array(sys.D), tol1=0.0)
@@ -1549,7 +1549,7 @@ def _convert_to_transfer_function(
                         den[i][j] = list(tfout[5][i, :])
 
             except ImportError:
-                # If slycot not available, do conversion using sp.signal.ss2tf
+                # If slicot not available, do conversion using sp.signal.ss2tf
                 for j in range(sys.ninputs):
                     num_j, den_j = sp.signal.ss2tf(
                         sys.A, sys.B, sys.C, sys.D, input=j)

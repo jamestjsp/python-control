@@ -81,7 +81,7 @@ def lqe(*args, **kwargs):
         Cross covariance matrix.  Not currently implemented.
     method : str, optional
         Set the method used for computing the result.  Current methods are
-        'slycot' and 'scipy'.  If set to None (default), try 'slycot' first
+        'slicot' and 'scipy'.  If set to None (default), try 'slicot' first
         and then 'scipy'.
 
     Returns
@@ -218,7 +218,7 @@ def dlqe(*args, **kwargs):
         Cross covariance matrix (not yet supported).
     method : str, optional
         Set the method used for computing the result.  Current methods are
-        'slycot' and 'scipy'.  If set to None (default), try 'slycot'
+        'slicot' and 'scipy'.  If set to None (default), try 'slicot'
         first and then 'scipy'.
 
     Returns

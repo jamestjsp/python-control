@@ -12,29 +12,21 @@ import scipy as sp
 
 from . import statesp
 from .config import _process_legacy_keyword
-from .exception import ControlArgument, ControlSlycot
+from .exception import ControlArgument, ControlSlicot
 from .iosys import _process_indices, _process_labels, isctime, isdtime
 from .lti import LTI
 from .mateqn import care, dare
 from .nlsys import NonlinearIOSystem, interconnect
 from .statesp import StateSpace, _ssmatrix, ss
 
-# Make sure we have access to the right Slycot routines
+# Make sure we have access to the right slicot routines
 try:
-    from slycot import sb03md57
-
-    # wrap without the deprecation warning
-    def sb03md(n, C, A, U, dico, job='X',fact='N',trana='N',ldwork=None):
-        ret = sb03md57(A, U, C, dico, job, fact, trana, ldwork)
-        return ret[2:]
+    from .slicot_compat import sb03md
 except ImportError:
-    try:
-        from slycot import sb03md
-    except ImportError:
-        sb03md = None
+    sb03md = None
 
 try:
-    from slycot import sb03od
+    from .slicot_compat import sb03od
 except ImportError:
     sb03od = None
 
@@ -159,11 +151,11 @@ def place_varga(A, B, p, dtime=False, alpha=None):
 
     """
 
-    # Make sure that Slycot is installed
+    # Make sure that slicot is installed
     try:
-        from slycot import sb01bd
+        from .slicot_compat import sb01bd
     except ImportError:
-        raise ControlSlycot("can't find slycot module sb01bd")
+        raise ControlSlicot("can't find slicot module sb01bd")
 
     # Convert the system inputs to NumPy arrays
     A_mat = _ssmatrix(A, square=True, name="A")
@@ -295,7 +287,7 @@ def lqr(*args, **kwargs):
         additional rows and columns in the `Q` matrix.
     method : str, optional
         Set the method used for computing the result.  Current methods are
-        'slycot' and 'scipy'.  If set to None (default), try 'slycot'
+        'slicot' and 'scipy'.  If set to None (default), try 'slicot'
         first and then 'scipy'.
 
     Returns
@@ -442,7 +434,7 @@ def dlqr(*args, **kwargs):
         additional rows and columns in the `Q` matrix.
     method : str, optional
         Set the method used for computing the result.  Current methods are
-        'slycot' and 'scipy'.  If set to None (default), try 'slycot'
+        'slicot' and 'scipy'.  If set to None (default), try 'slicot'
         first and then 'scipy'.
 
     Returns
@@ -1141,9 +1133,9 @@ def gram(sys, type):
         * if `type` is not 'c', 'o', 'cf' or 'of', or
         * if system is unstable (sys.A has eigenvalues not in left half plane).
 
-    ControlSlycot
-        If slycot routine sb03md cannot be found or
-        if slycot routine sb03od cannot be found.
+    ControlSlicot
+        If slicot routine sb03md cannot be found or
+        if slicot routine sb03od cannot be found.
 
     Examples
     --------
@@ -1181,7 +1173,7 @@ def gram(sys, type):
         # Compute Gramian by the Slycot routine sb03md
         # make sure Slycot is installed
         if sb03md is None:
-            raise ControlSlycot("can't find slycot module sb03md")
+            raise ControlSlicot("can't find slicot module sb03md")
         if type == 'c':
             tra = 'T'
             C = -sys.B @ sys.B.T
@@ -1190,7 +1182,7 @@ def gram(sys, type):
             C = -sys.C.T @ sys.C
         n = sys.nstates
         U = np.zeros((n, n))
-        A = np.array(sys.A)         # convert to NumPy array for slycot
+        A = np.array(sys.A)         # convert to NumPy array for slicot
         X, scale, sep, ferr, w = sb03md(
             n, C, A, U, dico, job='X', fact='N', trana=tra)
         gram = X
@@ -1199,11 +1191,11 @@ def gram(sys, type):
     elif type == 'cf' or type == 'of':
         # Compute Cholesky factored Gramian from Slycot routine sb03od
         if sb03od is None:
-            raise ControlSlycot("can't find slycot module sb03od")
+            raise ControlSlicot("can't find slicot module sb03od")
         tra = 'N'
         n = sys.nstates
         Q = np.zeros((n, n))
-        A = np.array(sys.A)         # convert to NumPy array for slycot
+        A = np.array(sys.A)         # convert to NumPy array for slicot
         if type == 'cf':
             m = sys.B.shape[1]
             B = np.zeros_like(A)

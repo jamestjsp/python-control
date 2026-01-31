@@ -229,7 +229,7 @@ class TestStateSpace:
         sys = _convert_to_statespace(TransferFunction([1], [1, 2, 1]))
         np.testing.assert_array_equal(sys.zeros(), np.array([]))
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def test_zero_siso(self, sys222):
         """Evaluate the zeros of a SISO system."""
         # extract only first input / first output system of sys222. This system is denoted sys111
@@ -259,7 +259,7 @@ class TestStateSpace:
         true_z = np.sort([-10.568501,   3.368501])
         np.testing.assert_array_almost_equal(z, true_z)
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def test_zero_mimo_sys623_non_square(self, sys623):
         """Evaluate the zeros of a non square MIMO system."""
 
@@ -406,7 +406,7 @@ class TestStateSpace:
                 ss2tf(result).minreal(),
             )
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     @pytest.mark.parametrize(
         "left, right, expected",
         [
@@ -481,7 +481,7 @@ class TestStateSpace:
             ss2tf(result).minreal(),
         )
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     @pytest.mark.parametrize(
         "left, right, expected",
         [
@@ -556,7 +556,7 @@ class TestStateSpace:
             ss2tf(result).minreal(),
         )
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     @pytest.mark.parametrize("power", [0, 1, 3, -3])
     @pytest.mark.parametrize("sysname", ["sys222", "sys322"])
     def test_pow(self, request, sysname, power):
@@ -575,7 +575,7 @@ class TestStateSpace:
         np.testing.assert_allclose(expected.C, result.C)
         np.testing.assert_allclose(expected.D, result.D)
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     @pytest.mark.parametrize("order", ["left", "right"])
     @pytest.mark.parametrize("sysname", ["sys121", "sys222", "sys322"])
     def test_pow_inv(self, request, sysname, order):
@@ -599,7 +599,7 @@ class TestStateSpace:
         # Check that the output is the same as the input
         np.testing.assert_allclose(R.outputs, U)
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def test_truediv(self, sys222, sys322):
         """Test state space truediv"""
         for sys in [sys222, sys322]:
@@ -618,7 +618,7 @@ class TestStateSpace:
                 ss2tf(result).minreal(),
             )
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def test_rtruediv(self, sys222, sys322):
         """Test state space rtruediv"""
         for sys in [sys222, sys322]:
@@ -719,7 +719,7 @@ class TestStateSpace:
             mag, phase, omega = sys.freqresp(true_omega)
             np.testing.assert_almost_equal(mag, true_mag)
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     def test_minreal(self):
         """Test a minreal model reduction."""
         # A = [-2, 0.5, 0; 0.5, -0.3, 0; 0, 0, -0.1]
@@ -899,8 +899,8 @@ class TestStateSpace:
         try:
             np.testing.assert_array_equal(dc, sys.dcgain())
         except NotImplementedError:
-            # Skip MIMO tests if there is no slycot
-            pytest.skip("slycot required for MIMO dcgain")
+            # Skip MIMO tests if there is no slicot
+            pytest.skip("slicot required for MIMO dcgain")
 
     def test_scalar_static_gain(self):
         """Regression: can we create a scalar static gain?
@@ -1514,7 +1514,7 @@ class TestLinfnorm:
         name, systype, sysargs, dt, refgpeak, reffpeak = request.param
         return ct.c2d(systype(*sysargs), dt), refgpeak, reffpeak
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     @pytest.mark.usefixtures('ignore_future_warning')
     def test_linfnorm_ct_siso(self, ct_siso):
         sys, refgpeak, reffpeak = ct_siso
@@ -1522,7 +1522,7 @@ class TestLinfnorm:
         np.testing.assert_allclose(gpeak, refgpeak)
         np.testing.assert_allclose(fpeak, reffpeak)
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     @pytest.mark.usefixtures('ignore_future_warning')
     def test_linfnorm_dt_siso(self, dt_siso):
         sys, refgpeak, reffpeak = dt_siso
@@ -1531,7 +1531,7 @@ class TestLinfnorm:
         np.testing.assert_allclose(gpeak, refgpeak)
         np.testing.assert_allclose(fpeak, reffpeak)
 
-    @pytest.mark.slycot
+    @pytest.mark.slicot
     @pytest.mark.usefixtures('ignore_future_warning')
     def test_linfnorm_ct_mimo(self, ct_siso):
         siso, refgpeak, reffpeak = ct_siso
@@ -1571,13 +1571,13 @@ def test_params_warning():
     # pytest.param(None),       # use this one when SLICOT bug is sorted out
     pytest.param(               # remove this one when SLICOT bug is sorted out
         None, marks=pytest.mark.xfail(
-            ct.slycot_check(), reason="tf2ss SLICOT bug")),
+            ct.slicot_check(), reason="tf2ss SLICOT bug")),
     pytest.param(
-        'slycot', marks=[
+        'slicot', marks=[
             pytest.mark.xfail(
-                not ct.slycot_check(), reason="slycot not installed"),
+                not ct.slicot_check(), reason="slicot not installed"),
             pytest.mark.xfail(  # remove this one when SLICOT bug is sorted out
-                ct.slycot_check(), reason="tf2ss SLICOT bug")]),
+                ct.slicot_check(), reason="tf2ss SLICOT bug")]),
     pytest.param('scipy')
 ])
 def test_tf2ss_unstable(method):
@@ -1602,13 +1602,13 @@ def test_tf2ss_unstable(method):
     np.testing.assert_allclose(tf_poles, ss_poles, rtol=1e-4)
 
 
-@pytest.mark.parametrize('have_slycot',
-                         [pytest.param(True, marks=pytest.mark.slycot),
-                          pytest.param(False, marks=pytest.mark.noslycot)])
-def test_tf2ss_mimo(have_slycot):
+@pytest.mark.parametrize('have_slicot',
+                         [pytest.param(True, marks=pytest.mark.slicot),
+                          pytest.param(False, marks=pytest.mark.noslicot)])
+def test_tf2ss_mimo(have_slicot):
     sys_tf = ct.tf([[[1], [1, 1, 1]]], [[[1, 1, 1], [1, 2, 1]]])
 
-    if have_slycot:
+    if have_slicot:
         sys_ss = ct.ss(sys_tf)
         np.testing.assert_allclose(
             np.sort(sys_tf.poles()), np.sort(sys_ss.poles()))

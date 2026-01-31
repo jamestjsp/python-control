@@ -57,7 +57,7 @@ def test_summation_exceptions():
 
 
 @pytest.mark.parametrize("dim",
-                         [1, pytest.param(3, marks=pytest.mark.slycot)])
+                         [1, pytest.param(3, marks=pytest.mark.slicot)])
 def test_interconnect_implicit(dim):
     """Test the use of implicit connections in interconnect()"""
     import random

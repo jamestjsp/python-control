@@ -32,7 +32,7 @@ import control
 
 from . import bdalg, config
 from .exception import ControlDimension, ControlMIMONotImplemented, \
-    ControlSlycot, slycot_check
+    ControlSlicot, slicot_check
 from .frdata import FrequencyResponseData
 from .iosys import InputOutputSystem, NamedSignal, _process_iosys_keywords, \
     _process_signal_list, _process_subsys_index, common_timebase, issiso
@@ -41,7 +41,7 @@ from .mateqn import _check_shape
 from .nlsys import InterconnectedSystem, NonlinearIOSystem
 
 try:
-    from slycot import ab13dd
+    from .slicot_compat import ab13dd
 except ImportError:
     ab13dd = None
 
@@ -789,7 +789,7 @@ class StateSpace(NonlinearIOSystem, LTI):
         out = self.horner(x, warn_infinite=warn_infinite)
         return _process_frequency_response(self, x, out, squeeze=squeeze)
 
-    def slycot_laub(self, x):
+    def slicot_laub(self, x):
         """Laub's method to evaluate response at complex frequency.
 
         Evaluate transfer function at complex frequency using Laub's
@@ -808,7 +808,7 @@ class StateSpace(NonlinearIOSystem, LTI):
             Frequency response.
 
         """
-        from slycot import tb05ad
+        from .slicot_compat import tb05ad
 
         # Make sure the argument is a 1D array of complex numbers
         x_arr = np.atleast_1d(x).astype(complex, copy=False)
@@ -889,7 +889,7 @@ class StateSpace(NonlinearIOSystem, LTI):
             return out
 
         try:
-            out = self.slycot_laub(x_arr)
+            out = self.slicot_laub(x_arr)
         except (ImportError, Exception):
             # Fall back because either Slycot unavailable or cannot handle
             # certain cases.
@@ -952,7 +952,7 @@ class StateSpace(NonlinearIOSystem, LTI):
         # Use AB08ND from Slycot if it's available, otherwise use
         # scipy.lingalg.eigvals().
         try:
-            from slycot import ab08nd
+            from .slicot_compat import ab08nd
 
             out = ab08nd(self.A.shape[0], self.B.shape[1], self.C.shape[0],
                          self.A, self.B, self.C, self.D)
@@ -1175,7 +1175,7 @@ class StateSpace(NonlinearIOSystem, LTI):
         """
         if self.nstates:
             try:
-                from slycot import tb01pd
+                from .slicot_compat import tb01pd
                 B = empty((self.nstates, max(self.ninputs, self.noutputs)))
                 B[:, :self.ninputs] = self.B
                 C = empty((max(self.noutputs, self.ninputs), self.nstates))
@@ -1185,7 +1185,7 @@ class StateSpace(NonlinearIOSystem, LTI):
                 return StateSpace(A[:nr, :nr], B[:nr, :self.ninputs],
                                   C[:self.noutputs, :nr], self.D, self.dt)
             except ImportError:
-                raise TypeError("minreal requires slycot tb01pd")
+                raise TypeError("minreal requires slicot tb01pd")
         else:
             return StateSpace(self)
 
@@ -1682,8 +1682,8 @@ def ss(*args, **kwargs):
         `config.defaults['statesp.remove_useless_states']` (default = False).
     method : str, optional
         Set the method used for converting a transfer function to a state
-        space system.  Current methods are 'slycot' and 'scipy'.  If set to
-        None (default), try 'slycot' first and then 'scipy' (SISO only).
+        space system.  Current methods are 'slicot' and 'scipy'.  If set to
+        None (default), try 'slicot' first and then 'scipy' (SISO only).
 
     Returns
     -------
@@ -1910,7 +1910,7 @@ def tf2ss(*args, **kwargs):
         with a unique integer id.
     method : str, optional
         Set the method used for computing the result.  Current methods are
-        'slycot' and 'scipy'.  If set to None (default), try 'slycot'
+        'slicot' and 'scipy'.  If set to None (default), try 'slicot'
         first and then 'scipy' (SISO only).
 
     Raises
@@ -1928,7 +1928,7 @@ def tf2ss(*args, **kwargs):
 
     Notes
     -----
-    The `slycot` routine used to convert a transfer function into state space
+    The `slicot` routine used to convert a transfer function into state space
     form appears to have a bug and in some (rare) instances may not return
     a system with the same poles as the input transfer function.  For SISO
     systems, setting `method` = 'scipy' can be used as an alternative.
@@ -1996,7 +1996,7 @@ def linfnorm(sys, tol=1e-10):
 
     See Also
     --------
-    slycot.ab13dd
+    slicot.ab13dd
 
     Notes
     -----
@@ -2007,7 +2007,7 @@ def linfnorm(sys, tol=1e-10):
 
     """
     if ab13dd is None:
-        raise ControlSlycot("Can't find slycot module ab13dd")
+        raise ControlSlicot("Can't find slicot module ab13dd")
 
     a, b, c, d = ssdata(_convert_to_statespace(sys))
     e = np.eye(a.shape[0])
@@ -2394,11 +2394,11 @@ def _convert_to_statespace(sys, use_prefix_suffix=False, method=None):
             raise ValueError("transfer function is non-proper; can't "
                              "convert to StateSpace system")
 
-        if method is None and slycot_check() or method == 'slycot':
-            if not slycot_check():
-                raise ValueError("method='slycot' requires slycot")
+        if method is None and slicot_check() or method == 'slicot':
+            if not slicot_check():
+                raise ValueError("method='slicot' requires slicot")
 
-            from slycot import td04ad
+            from .slicot_compat import td04ad
 
             # Change the numerator and denominator arrays so that the transfer
             # function matrix has a common denominator.

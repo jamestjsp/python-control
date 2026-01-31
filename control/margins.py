@@ -16,7 +16,7 @@ from .exception import ControlMIMONotImplemented
 from .iosys import issiso
 from .ctrlutil import mag2db
 try:
-    from slycot import ab13md
+    from .slicot_compat import ab13md
 except ImportError:
     ab13md = None
 
@@ -577,7 +577,7 @@ def disk_margins(L, omega, skew=0.0, returnall=False):
     # Need slycot if L is MIMO, for mu calculation
     if not L.issiso() and ab13md == None:
         raise ControlMIMONotImplemented(
-            "Need slycot to compute MIMO disk_margins")
+            "Need slicot to compute MIMO disk_margins")
 
     # Get dimensions of feedback system
     num_loops = statesp.ss(L).C.shape[0]
