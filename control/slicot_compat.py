@@ -13,6 +13,18 @@ to existing code in python-control.
 import slicot  # noqa: F401 - import at top level so ImportError is raised early
 import numpy as np
 
+from .exception import ControlArgument
+
+__all__ = [
+    'SlicotResultWarning', 'SlicotArithmeticError',
+    'sb03md', 'sb03od', 'sb04md', 'sb04qd', 'sg03ad',
+    'sb02md', 'sb02mt', 'sg02ad', 'sb01bd',
+    'sb10ad', 'sb10hd', 'ab08nd',
+    'ab09ad', 'ab09md', 'ab09nd',
+    'ab13bd', 'ab13dd', 'ab13md',
+    'tb01pd', 'tb04ad', 'tb05ad', 'td04ad', 'mb03rd',
+]
+
 
 class SlicotResultWarning(UserWarning):
     """Warning for non-fatal issues from SLICOT routines."""
@@ -49,7 +61,7 @@ def _check_info(info, routine_name, warn_codes=None):
         )
         return
     if info < 0:
-        raise ValueError(f"{routine_name}: parameter {-info} is invalid")
+        raise ControlArgument(f"{routine_name}: parameter {-info} is invalid")
     raise SlicotArithmeticError(
         f"{routine_name} returned info={info}", info=info
     )
