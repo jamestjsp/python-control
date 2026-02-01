@@ -28,7 +28,7 @@ jobs:
       shell: bash -l {0}
       run: |
         mamba install cvxopt pandas
-        pip install slicot 
+        pip install 'slicot>=1.0.12'
 
     - name: Run doctest
       shell: bash -l {0}

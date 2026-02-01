@@ -63,7 +63,7 @@ jobs:
           mamba install slycot
         fi
         if [[ '${{matrix.slicot}}' == 'pip' ]]; then
-          pip install slicot
+          pip install 'slicot>=1.0.12'
         fi
         if [[ '${{matrix.pandas}}' == 'conda' ]]; then
           mamba install pandas

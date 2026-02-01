@@ -22,7 +22,7 @@ jobs:
            numpy matplotlib scipy \
            pmw jupyter \
            ipython!=9.0
-        conda run -n control-examples-env pip install slicot
+        conda run -n control-examples-env pip install 'slicot>=1.0.12'
 
     - name: Install from source
       run: |
