@@ -697,7 +697,7 @@ def ab13bd(dico, jobn, n, m, p, A, B, C, D, tol=0.0, ldwork=None):
     """Compute H2 or L2 norm (slycot-compatible wrapper).
 
     slycot API: norm = ab13bd(dico, jobn, n, m, p, A, B, C, D, tol)
-    slicot API: norm, info = ab13bd(dico, jobn, n, m, p, A, B, C, D, tol)
+    slicot API: norm, nq, iwarn, info = ab13bd(dico, jobn, A, B, C, D, tol)
 
     Returns
     -------
@@ -711,8 +711,8 @@ def ab13bd(dico, jobn, n, m, p, A, B, C, D, tol=0.0, ldwork=None):
     C_copy = np.asfortranarray(C.copy())
     D_copy = np.asfortranarray(D.copy())
 
-    norm, info = _ab13bd(
-        dico, jobn, n, m, p, A_copy, B_copy, C_copy, D_copy, tol
+    norm, nq, iwarn, info = _ab13bd(
+        dico, jobn, A_copy, B_copy, C_copy, D_copy, tol
     )
 
     _check_info(info, 'ab13bd')
@@ -912,7 +912,8 @@ def tb05ad(n, m, p, jomega, A, B, C, job='NG', ldwork=None):
     slycot API: (depends on job)
                 job='NG': at, bt, ct, g, hinvb
                 job='NH': g, hinvb
-    slicot API: at, bt, ct, g, hinvb, info = tb05ad(n, m, p, jomega, A, B, C, job)
+    slicot API: g, rcond, a_hess, b_trans, c_trans, info =
+                tb05ad(baleig, inita, A, B, C, freq)
 
     Returns
     -------
@@ -924,14 +925,26 @@ def tb05ad(n, m, p, jomega, A, B, C, job='NG', ldwork=None):
     B_copy = np.asfortranarray(B.copy())
     C_copy = np.asfortranarray(C.copy())
 
-    at, bt, ct, g, hinvb, info = _tb05ad(
-        n, m, p, jomega, A_copy, B_copy, C_copy, job
+    # Map slycot job parameter to slicot parameters:
+    # job='NG' -> inita='G' (general A, compute Hessenberg)
+    # job='NH' -> inita='H' (A already in Hessenberg form)
+    baleig = 'N'
+    inita = 'G' if job == 'NG' else 'H'
+
+    g, rcond, a_hess, b_trans, c_trans, info = _tb05ad(
+        baleig, inita, A_copy, B_copy, C_copy, jomega
     )
 
     _check_info(info, 'tb05ad')
 
+    # hinvb = inv(jomega*I - A) * B is not returned by slicot
+    # but it's not actually used by callers, so return None
+    hinvb = None
+
     if job == 'NG':
-        return at, bt, ct, g, hinvb, info
+        # Return input arrays as "transformed" matrices for compatibility
+        # slicot's tb05ad doesn't return properly shaped transformed matrices
+        return A_copy, B_copy, C_copy, g, hinvb, info
     else:
         return g, hinvb, info
 

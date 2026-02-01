@@ -6,7 +6,7 @@ jobs:
   test-linux-conda:
     name: >
       Py${{ matrix.python-version }};
-      ${{ matrix.slycot || 'no' }} Slycot;
+      ${{ matrix.slycot && 'slycot' || matrix.slicot && 'slicot' || 'no-slicot' }};
       ${{ matrix.pandas || 'no' }} Pandas;
       ${{ matrix.cvxopt || 'no' }} CVXOPT
       ${{ matrix.mplbackend && format('; {0}', matrix.mplbackend) }}
@@ -18,6 +18,7 @@ jobs:
       matrix:
         python-version: ['3.10', '3.12']
         slycot: ["", "conda"]
+        slicot: [""]
         pandas: [""]
         cvxopt: ["", "conda"]
         mplbackend: [""]
@@ -27,6 +28,15 @@ jobs:
             pandas: conda
             cvxopt: conda
             mplbackend: QtAgg
+          # Test with slicot (pip) instead of slycot (conda)
+          - python-version: '3.12'
+            slicot: pip
+            slycot: ""
+            cvxopt: conda
+        exclude:
+          # Don't test both slycot and slicot together
+          - slycot: "conda"
+            slicot: "pip"
 
     steps:
     - uses: actions/checkout@v3
@@ -52,6 +62,9 @@ jobs:
         if [[ '${{matrix.slycot}}' == 'conda' ]]; then
           mamba install slycot
         fi
+        if [[ '${{matrix.slicot}}' == 'pip' ]]; then
+          pip install slicot
+        fi
         if [[ '${{matrix.pandas}}' == 'conda' ]]; then
           mamba install pandas
         fi
@@ -70,7 +83,7 @@ jobs:
     - name: report coverage
       uses: coverallsapp/github-action@v2
       with:
-        flag-name: conda-pytest_py${{ matrix.python-version }}_${{ matrix.slycot || 'no' }}-Slycot_${{ matrix.pandas || 'no' }}-Pandas_${{ matrix.cvxopt || 'no' }}_CVXOPT-${{ matrix.mplbackend && format('; {0}', matrix.mplbackend) }}
+        flag-name: conda-pytest_py${{ matrix.python-version }}_${{ matrix.slycot && 'slycot' || matrix.slicot && 'slicot' || 'no-slicot' }}_${{ matrix.pandas || 'no' }}-Pandas_${{ matrix.cvxopt || 'no' }}_CVXOPT-${{ matrix.mplbackend && format('; {0}', matrix.mplbackend) }}
         parallel: true
         file: coverage.xml
 
