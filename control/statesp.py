@@ -1176,9 +1176,9 @@ class StateSpace(NonlinearIOSystem, LTI):
         if self.nstates:
             try:
                 from .slicot_compat import tb01pd
-                B = empty((self.nstates, max(self.ninputs, self.noutputs)))
+                B = zeros((self.nstates, max(self.ninputs, self.noutputs)))
                 B[:, :self.ninputs] = self.B
-                C = empty((max(self.noutputs, self.ninputs), self.nstates))
+                C = zeros((max(self.noutputs, self.ninputs), self.nstates))
                 C[:self.noutputs, :] = self.C
                 A, B, C, nr = tb01pd(self.nstates, self.ninputs, self.noutputs,
                                      self.A, B, C, tol=tol)

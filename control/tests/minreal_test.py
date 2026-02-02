@@ -13,8 +13,8 @@ from control.xferfcn import TransferFunction
 from itertools import permutations
 
 
-@pytest.fixture
-def fixedseed(scope="class"):
+@pytest.fixture(scope="class")
+def fixedseed():
     np.random.seed(5)
 
 
@@ -79,9 +79,8 @@ class TestMinreal:
                             # Find the closest zero
                             assert min(abs(z1 - z)) <= 1e-7
 
-        # Make sure some reductions occurred (exact count depends on minreal impl)
-        # (May vary between slycot and slicot implementations)
-        assert nreductions >= 0
+        # Verify expected reductions occur (seed=5 yields 2 reducible systems)
+        assert nreductions == 2
 
     def testMinrealSS(self):
         """Test a minreal model reduction"""
