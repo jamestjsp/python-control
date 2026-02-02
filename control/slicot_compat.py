@@ -1122,7 +1122,7 @@ def mb03rd(n, A, X, pmax=1.0, tol=0.0, ldwork=None):
 # If using slycot (not slicot), overwrite with direct imports from slycot
 if _use_slycot and not _use_slicot:
     from slycot import (  # noqa: F811
-        sb03md, sb03od, sb04md, sb04qd, sg03ad,
+        sb03od, sb04md, sb04qd, sg03ad,
         sb02md, sb02mt, sg02ad, sb01bd,
         sb10ad, sb10hd, ab08nd,
         ab09ad, ab09md, ab09nd,
@@ -1133,3 +1133,10 @@ if _use_slycot and not _use_slicot:
         SlycotResultWarning as SlicotResultWarning,
         SlycotArithmeticError as SlicotArithmeticError,
     )
+
+    from slycot import sb03md57
+
+    def sb03md(n, C, A, U, dico, job='X', fact='N', trana='N', ldwork=None):  # noqa: F811
+        """Wrapper for slycot's sb03md57."""
+        ret = sb03md57(A, U, C, dico, job, fact, trana, ldwork)
+        return ret[2:]
