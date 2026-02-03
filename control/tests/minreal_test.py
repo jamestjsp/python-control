@@ -79,7 +79,8 @@ class TestMinreal:
                             # Find the closest zero
                             assert min(abs(z1 - z)) <= 1e-7
 
-        # Verify expected reductions occur (seed=5 yields 2 reducible systems)
+        # Make sure that the number of systems reduced is as expected
+        # (Need to update this number if you change the seed at top of file)
         assert nreductions == 2
 
     def testMinrealSS(self):

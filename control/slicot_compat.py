@@ -811,9 +811,10 @@ def tb01pd(n, m, p, A, B, C, job='M', equil='S', tol=0.0, ldwork=None):
     """
     from slicot import tb01pd as _tb01pd
 
-    A_copy = np.asfortranarray(A.copy())
-    B_copy = np.asfortranarray(B.copy())
-    C_copy = np.asfortranarray(C.copy())
+    # Extract actual-sized arrays (caller may pass pre-padded arrays)
+    A_copy = np.asfortranarray(A[:n, :n].copy())
+    B_copy = np.asfortranarray(B[:n, :m].copy())
+    C_copy = np.asfortranarray(C[:p, :n].copy())
 
     if tol is None:
         tol = 0.0
